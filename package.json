@@ -1,0 +1,39 @@
+{
+  "name": "dev-cors-proxy",
+  "version": "0.1.0",
+  "description": "Local development CORS proxy with an lcp-compatible CLI.",
+  "main": "./lib/index.js",
+  "bin": {
+    "lcp": "./bin/lcp.js"
+  },
+  "files": [
+    "bin",
+    "lib",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "start": "node ./bin/lcp.js",
+    "test": "node --test",
+    "prepublishOnly": "pnpm test"
+  },
+  "keywords": [
+    "cors",
+    "proxy",
+    "dev",
+    "cli",
+    "local"
+  ],
+  "license": "MIT",
+  "private": false,
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "packageManager": "pnpm@10.0.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}

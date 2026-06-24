@@ -1,14 +1,14 @@
 {
-  "name": "dev-cors-proxy",
-  "version": "0.1.0",
+  "name": "cors-proxy-local",
+  "version": "0.1.1",
   "description": "Local development CORS proxy with an lcp-compatible CLI.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/francisco-ebi/dev-cors-proxy.git"
+    "url": "git+https://github.com/francisco-ebi/cors-proxy-local.git"
   },
-  "homepage": "https://github.com/francisco-ebi/dev-cors-proxy",
+  "homepage": "https://github.com/francisco-ebi/cors-proxy-local",
   "bugs": {
-    "url": "https://github.com/francisco-ebi/dev-cors-proxy/issues"
+    "url": "https://github.com/francisco-ebi/cors-proxy-local/issues"
   },
   "main": "./lib/index.js",
   "bin": {

@@ -3,6 +3,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const http = require("node:http");
+const zlib = require("node:zlib");
 
 const {
   buildTargetUrl,
@@ -157,6 +158,48 @@ test("custom proxyPartial changes the local route prefix", async () => {
     const body = await response.text();
 
     assert.equal(body, "/hello");
+  } finally {
+    await close(proxyServer);
+    await close(upstreamServer);
+  }
+});
+
+test("proxy does not forward stale compression headers for decoded upstream bodies", async () => {
+  const upstreamServer = await listen(
+    http.createServer((request, response) => {
+      const body = JSON.stringify({
+        ok: true,
+        url: request.url
+      });
+      const gzippedBody = zlib.gzipSync(body);
+
+      response.setHeader("content-type", "application/json");
+      response.setHeader("content-encoding", "gzip");
+      response.setHeader("content-length", String(gzippedBody.length));
+      response.end(gzippedBody);
+    })
+  );
+
+  const upstreamPort = upstreamServer.address().port;
+  const { app } = createProxyApp({
+    proxyUrl: `http://127.0.0.1:${upstreamPort}`
+  });
+  const proxyServer = await listen(http.createServer(app));
+  const proxyPort = proxyServer.address().port;
+
+  try {
+    const response = await fetch(`http://127.0.0.1:${proxyPort}/proxy/api/search`, {
+      headers: {
+        Origin: "http://localhost:3000"
+      }
+    });
+    const payload = await response.json();
+
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get("content-encoding"), null);
+    assert.equal(response.headers.get("content-length"), null);
+    assert.equal(payload.ok, true);
+    assert.equal(payload.url, "/api/search");
   } finally {
     await close(proxyServer);
     await close(upstreamServer);
